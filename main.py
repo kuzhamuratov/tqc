@@ -13,7 +13,7 @@ from tqc.structures import Actor, Critic, RescaleAction
 from tqc.functions import eval_policy
 
 
-EPISODE_LENGTH = 160
+EPISODE_LENGTH = 80
 
 
 def main(args, results_dir, models_dir, prefix):
