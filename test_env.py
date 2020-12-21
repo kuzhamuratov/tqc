@@ -10,10 +10,10 @@ from tqc.structures import Actor, RescaleAction
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', default='models/_DKittyOrientRandomDynamics-v0_0_actor',
-                        help='Path to the model file. (default: models/DKittyStandFixed)')
-    parser.add_argument('--env', default='DKittyOrientRandomDynamics-v0',
-                        help='Environment name. (default: DKittyStandFixed-v0)')
+    parser.add_argument('--model', default='models/no_field_15_degree_DKittyWalkRandomDynamics-v0_0_actor',
+                        help='Path to the model file. check default in file')
+    parser.add_argument('--env', default='DKittyWalkRandomDynamics-v0',
+                        help='Environment name. (default: DKittyWalkRandomDynamics-v0)')
     parser.add_argument('--dont_save', default=False, action='store_true',
                         help='Do not save collected data from observations. (default: False)')
     parser.add_argument('--save_actuators', default=False, action='store_true',
@@ -21,9 +21,8 @@ if __name__ == '__main__':
     parser.add_argument('--name', default='unknown',
                         help='Name for csv file containing collected data (default: unknown)')
     args = parser.parse_args()
-
-    sim_env = RescaleAction(gym.make(args.env), -1., 1.)
-    real_env = RescaleAction(gym.make(args.env), -1., 1.) #, device_path='/dev/ttyUSB0', torso_tracker_id=1, reset_type='scripted')
+    sim_env = RescaleAction(gym.make(args.env, angle=np.pi/180.*15.), -1., 1.)
+    real_env = RescaleAction(gym.make(args.env, angle=np.pi/180.*15.), -1., 1.) #, device_path='/dev/ttyUSB0', torso_tracker_id=1, reset_type='scripted')
 
     print("Created 2 env: ", args.env)
 
@@ -40,7 +39,7 @@ if __name__ == '__main__':
         policy.load_state_dict(torch.load(args.model, map_location=device))
         policy.eval()
 
-    num_iterations = 10
+    num_iterations = 30
     real_obs = []  # List of observations
     sim_obs = []
     successes = []
@@ -64,7 +63,7 @@ if __name__ == '__main__':
         while not done:
             action = policy.select_action(observation)
             actions.append(action)
-
+            real_env.render()
             observation, reward, done, info = real_env.step(action)
             real_obs.append(observation.tolist())
 
