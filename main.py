@@ -20,8 +20,8 @@ def main(args, results_dir, models_dir, prefix):
     # --- Init ---
 
     # remove TimeLimit
-    env = gym.make(args.env, angle=np.pi/180.*1.).unwrapped
-    eval_env = gym.make(args.env, angle = np.pi/180.*1.).unwrapped
+    env = gym.make(args.env, angle=np.pi/180.*10.).unwrapped
+    eval_env = gym.make(args.env, angle = np.pi/180.*10.).unwrapped
     env = RescaleAction(env, -1., 1.)
     eval_env = RescaleAction(eval_env, -1., 1.)
 
@@ -55,7 +55,6 @@ def main(args, results_dir, models_dir, prefix):
         next_state, reward, done, _ = env.step(action)
         episode_timesteps += 1
         replay_buffer.add(state, action, next_state, reward, done)
-
         state = next_state
         episode_return += reward
 
@@ -83,7 +82,7 @@ def main(args, results_dir, models_dir, prefix):
 import robel
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--env", default='DKittyWalkRandomDynamics-v0')          # OpenAI gym environment name
+    parser.add_argument("--env", default='DKittyWalkAngleRandomDynamics-v0')          # OpenAI gym environment name
     parser.add_argument("--eval_freq", default=1e3, type=int)       # How often (time steps) we evaluate
     parser.add_argument("--max_timesteps", default=1e6, type=int)   # Max time steps to run environment
     parser.add_argument("--seed", default=0, type=int)

@@ -10,7 +10,7 @@ from tqc.structures import Actor, RescaleAction
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', default='models/no_field_15_degree_DKittyWalkRandomDynamics-v0_0_actor',
+    parser.add_argument('--model', default='models/no_field_10_degree_DKittyWalkRandomDynamics-v0_0_actor',
                         help='Path to the model file. check default in file')
     parser.add_argument('--env', default='DKittyWalkRandomDynamics-v0',
                         help='Environment name. (default: DKittyWalkRandomDynamics-v0)')
@@ -21,8 +21,8 @@ if __name__ == '__main__':
     parser.add_argument('--name', default='unknown',
                         help='Name for csv file containing collected data (default: unknown)')
     args = parser.parse_args()
-    sim_env = RescaleAction(gym.make(args.env, angle=np.pi/180.*15.), -1., 1.)
-    real_env = RescaleAction(gym.make(args.env, angle=np.pi/180.*15.), -1., 1.) #, device_path='/dev/ttyUSB0', torso_tracker_id=1, reset_type='scripted')
+    sim_env = RescaleAction(gym.make(args.env, angle=-np.pi/180.*5.), -1., 1.)
+    real_env = RescaleAction(gym.make(args.env, angle=-np.pi/180.*5.), -1., 1.) #, device_path='/dev/ttyUSB0', torso_tracker_id=1, reset_type='scripted')
 
     print("Created 2 env: ", args.env)
 
