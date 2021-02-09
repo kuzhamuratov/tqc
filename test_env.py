@@ -21,8 +21,8 @@ if __name__ == '__main__':
     parser.add_argument('--name', default='unknown',
                         help='Name for csv file containing collected data (default: unknown)')
     args = parser.parse_args()
-    sim_env = RescaleAction(gym.make(args.env, angle=-np.pi/180.*5.), -1., 1.)
-    real_env = RescaleAction(gym.make(args.env, angle=-np.pi/180.*5.), -1., 1.) #, device_path='/dev/ttyUSB0', torso_tracker_id=1, reset_type='scripted')
+    sim_env = RescaleAction(gym.make(args.env, angle=np.pi/180.*10.), -1., 1.)
+    real_env = RescaleAction(gym.make(args.env, angle=np.pi/180.*10.), -1., 1.) #, device_path='/dev/ttyUSB0', torso_tracker_id=1, reset_type='scripted')
 
     print("Created 2 env: ", args.env)
 
@@ -39,7 +39,7 @@ if __name__ == '__main__':
         policy.load_state_dict(torch.load(args.model, map_location=device))
         policy.eval()
 
-    num_iterations = 30
+    num_iterations = 5
     real_obs = []  # List of observations
     sim_obs = []
     successes = []
