@@ -20,8 +20,8 @@ def main(args, results_dir, models_dir, prefix):
     # --- Init ---
 
     # remove TimeLimit
-    env = gym.make(args.env, angle=np.pi/180.*10.).unwrapped
-    eval_env = gym.make(args.env, angle = np.pi/180.*10.).unwrapped
+    env = gym.make(args.env, angle=np.pi/180.*0.).unwrapped
+    eval_env = gym.make(args.env, angle = np.pi/180.*0.).unwrapped
     env = RescaleAction(env, -1., 1.)
     eval_env = RescaleAction(eval_env, -1., 1.)
 

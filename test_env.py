@@ -21,8 +21,8 @@ if __name__ == '__main__':
     parser.add_argument('--name', default='unknown',
                         help='Name for csv file containing collected data (default: unknown)')
     args = parser.parse_args()
-    sim_env = RescaleAction(gym.make(args.env, angle=np.pi/180.*10.), -1., 1.)
-    real_env = RescaleAction(gym.make(args.env, angle=np.pi/180.*10.), -1., 1.) #, device_path='/dev/ttyUSB0', torso_tracker_id=1, reset_type='scripted')
+    sim_env = RescaleAction(gym.make(args.env, angle=np.pi/180.*0.), -1., 1.)
+    real_env = RescaleAction(gym.make(args.env, angle=np.pi/180.*0.), -1., 1.) #, device_path='/dev/ttyUSB0', torso_tracker_id=1, reset_type='scripted')
 
     print("Created 2 env: ", args.env)
 
@@ -39,7 +39,7 @@ if __name__ == '__main__':
         policy.load_state_dict(torch.load(args.model, map_location=device))
         policy.eval()
 
-    num_iterations = 5
+    num_iterations = 50
     real_obs = []  # List of observations
     sim_obs = []
     successes = []
@@ -47,6 +47,7 @@ if __name__ == '__main__':
     episodes = []
     steps = []
     total_success = 0
+    reward_full = []
 
     for current_iteration in range(num_iterations):
         print('CURRENT ITERATION: {}'.format(current_iteration))
@@ -59,14 +60,15 @@ if __name__ == '__main__':
         curr_success = 0
         action = np.zeros(12)
         cnt = 0
+        curr_reward = 0
 
         while not done:
             action = policy.select_action(observation)
             actions.append(action)
-            real_env.render()
+            #real_env.render()
             observation, reward, done, info = real_env.step(action)
             real_obs.append(observation.tolist())
-
+            curr_reward += reward
             sim_env.set_state(real_env.get_state())  # Set the simulation state the same as real
 
             sim_observation, sim_reward, sim_done, sim_info = sim_env.step(action)
@@ -89,7 +91,7 @@ if __name__ == '__main__':
             pd.DataFrame(real_obs[-160:]).to_csv('experiments_data/actuator_{}_real'.format(current_iteration) + '.csv', index=False)
             pd.DataFrame(sim_obs[-160:]).to_csv('experiments_data/actuator_{}_sim'.format(current_iteration) + '.csv', index=False)
             print('SAVED FOR ACTUATOR {}'.format(current_iteration))
-
+        reward_full.append(curr_reward)
         #input()
 
     if not args.dont_save:
@@ -121,4 +123,5 @@ if __name__ == '__main__':
     real_env.close()
 
     print("TOTAL SUCCESSES: ", total_success)
+    print("Mean reward", np.mean(reward_full))
     print("Environment closed")
